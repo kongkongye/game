@@ -11,10 +11,10 @@ window.Conn = (function () {
     //     }
     // };
 
-    const log = new Logger(LogConstant.SOURCE_CONN);
+    var log = new Logger(LogConstant.SOURCE_CONN);
 
     //所有的包处理器
-    const handlers = {};
+    var handlers = {};
 
     // var data = {
     //     data: data,    //包数据

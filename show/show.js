@@ -8,10 +8,10 @@ window.Show = (function () {
     //     }
     // };
 
-    const log = new Logger(LogConstant.SOURCE_SHOW);
+    var log = new Logger(LogConstant.SOURCE_SHOW);
 
     //type为''表示默认处理器
-    const handlers = {};
+    var handlers = {};
 
     /**
      * 注册显示类型处理器

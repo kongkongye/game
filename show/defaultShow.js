@@ -1,5 +1,5 @@
 (function () {
-    const MAX_CACHES = 100;
+    var MAX_CACHES = 100;
     var shows = [];
 
     /**

@@ -1,5 +1,5 @@
 window.History = (function () {
-    const HISTORY_MAX_CACHES = 100;
+    var HISTORY_MAX_CACHES = 100;
 
     // /**
     //  * 历史信息

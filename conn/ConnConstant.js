@@ -1,10 +1,10 @@
-const ConnConstant = (function () {
-    const PROTOCOL = "ws";
-    const HOST = "rest-game.kongkongye.com";
-    const PORT = "80";
-    const PATH = "/ws";
-    const URL = PROTOCOL+"://"+HOST+":"+PORT+PATH;
-    const CALLBACK_TIMEOUT = 10000;
+var ConnConstant = (function () {
+    var PROTOCOL = "ws";
+    var HOST = "rest-game.kongkongye.com";
+    var PORT = "80";
+    var PATH = "/ws";
+    var URL = PROTOCOL+"://"+HOST+":"+PORT+PATH;
+    var CALLBACK_TIMEOUT = 10000;
 
     return {
         PROTOCOL: PROTOCOL,

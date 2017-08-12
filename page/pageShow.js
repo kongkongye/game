@@ -1,6 +1,6 @@
 window.PageShow = (function () {
     //图片正则
-    const IMAGE_REGEX = /(\[\![^\]]+\])/g;
+    var IMAGE_REGEX = /(\[\![^\]]+\])/g;
 
     var log = new Logger(LogConstant.SOURCE_PAGE);
 
