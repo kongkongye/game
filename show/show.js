@@ -1,5 +1,5 @@
 window.Show = (function () {
-    // let ShowHandler = {
+    // var ShowHandler = {
     //     /**
     //      * 处理显示
     //      * @param msg 信息,不为null可为""
@@ -18,7 +18,7 @@ window.Show = (function () {
      * @param {string} type 类型
      * @param {object} handler 处理器(看ShowHandler)
      */
-    let register = function (type, handler) {
+    var register = function (type, handler) {
         if (!type) type = '';
         handlers[type] = handler;
 
@@ -32,7 +32,7 @@ window.Show = (function () {
      * @param {string} type 类型
      * @returns {object} 处理器(看ShowHandler)
      */
-    let get = function (type) {
+    var get = function (type) {
         return handlers[type];
     };
 
@@ -41,13 +41,13 @@ window.Show = (function () {
      * @param type ''表示默认显示处理器
      * @param msg 信息
      */
-    let show = (type, msg) => {
+    var show = function(type, msg) {
         //转成不为null的字符串
         if (msg === undefined || msg === null) msg = '';
         else msg = msg+'';
 
         //获取处理器
-        let showHandler = handlers[type];
+        var showHandler = handlers[type];
 
         //处理器不存在
         if (!showHandler) {
@@ -67,14 +67,14 @@ window.Show = (function () {
          *            1. 'true 信息'
          *            2. 'false 类型 信息'
          */
-        handle: (id, arg) => {
-            let type;
-            let msg;
+        handle: function(id, arg) {
+            var type;
+            var msg;
             if (arg.split(' ')[0] === 'true') {
                 type = '';
                 msg = arg.split(' ')[1];
             }else {
-                let args = Common.split(arg, ' ', 3);
+                var args = Common.split(arg, ' ', 3);
                 type = args[1];
                 msg = args[2];
             }
@@ -88,8 +88,8 @@ window.Show = (function () {
     Conn.register(PacketConstant.SERVER5110SHOW, {
         handle: function (data) {
             //解析
-            let type = data["type"] || '';
-            let msg = data["msg"] || "";
+            var type = data["type"] || '';
+            var msg = data["msg"] || "";
 
             //显示
             show(type, msg);

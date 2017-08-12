@@ -1,5 +1,8 @@
-(() => {
+(function() {
     Cmd.registerClientHandler(CmdConstant.CMD_EVAL, {
-        handle: (id, arg) => eval(arg),//执行js语句
+        handle: function(id, arg) {
+            //执行js语句
+            eval(arg);
+        }
     });
 })();

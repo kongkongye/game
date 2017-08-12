@@ -1,10 +1,10 @@
 window.List = (function () {
-    let log = new Logger(LogConstant.SOURCE_LIST);
+    var log = new Logger(LogConstant.SOURCE_LIST);
 
     /**
      * 列表第一页
      */
-    let listFirst = function (id) {
+    var listFirst = function (id) {
         log.debug(LogType.OPERATE, '列表第一页');
         changePage(id, 1);
     };
@@ -12,34 +12,34 @@ window.List = (function () {
     /**
      * 列表最后页
      */
-    let listLast = function (id) {
+    var listLast = function (id) {
         log.debug(LogType.OPERATE, '列表最后页');
-        let pageInfo = Slot.getPageInfo(id);
+        var pageInfo = Slot.getPageInfo(id);
         changePage(id, Common.getMaxPage(pageInfo.listTotal, PageConfig.getListSize(pageInfo.path) || 1));
     };
 
     /**
      * 列表上一页
      */
-    let listPre = function (id) {
+    var listPre = function (id) {
         log.debug(LogType.OPERATE, '列表上一页');
-        let pageInfo = Slot.getPageInfo(id);
+        var pageInfo = Slot.getPageInfo(id);
         changePage(id, pageInfo.page-1);
     };
 
     /**
      * 列表下一页
      */
-    let listNext = function (id) {
+    var listNext = function (id) {
         log.debug(LogType.OPERATE, '列表下一页');
-        let pageInfo = Slot.getPageInfo(id);
+        var pageInfo = Slot.getPageInfo(id);
         changePage(id, pageInfo.page+1);
     };
 
     /**
      * 列表指定页
      */
-    let listTo = function (id, tarPage) {
+    var listTo = function (id, tarPage) {
         if (!tarPage || tarPage <= 0) {
             log.debug(LogType.DETAIL, '列表页面必须>=1');
             return;
@@ -54,12 +54,12 @@ window.List = (function () {
      * @param id 页面id
      * @param tarPage 目标页面,页面从1开始
      */
-    let changePage = function (id, tarPage) {
-        let pageInfo = Slot.getPageInfo(id);
-        let pageSize = PageConfig.getListSize(pageInfo.path);
+    var changePage = function (id, tarPage) {
+        var pageInfo = Slot.getPageInfo(id);
+        var pageSize = PageConfig.getListSize(pageInfo.path);
 
         //页面修正
-        let maxPage = Common.getMaxPage(pageInfo.listTotal, pageSize);
+        var maxPage = Common.getMaxPage(pageInfo.listTotal, pageSize);
         if (maxPage < 1) maxPage = 1;
         if (tarPage < 1) tarPage = 1;
         else if (tarPage > maxPage) tarPage = maxPage;
@@ -81,7 +81,7 @@ window.List = (function () {
     //注册客户端命令
     Cmd.registerClientHandler(CmdConstant.CMD_LIST, {
         handle: function (id, arg) {
-            let args = arg.split(' ');
+            var args = arg.split(' ');
             if (args.length >= 1) {
                 if (args[0] === 'first') {
                     listFirst(id);

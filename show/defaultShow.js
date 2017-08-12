@@ -1,13 +1,13 @@
 (function () {
     const MAX_CACHES = 100;
-    let shows = [];
+    var shows = [];
 
     /**
      * 更新面板
      * @param expand 是否扩展
      */
-    let update = expand => {
-        let height;
+    var update = function(expand) {
+        var height;
         if (expand) {
             height = $(window).height()/2;
             if (height > 500) height = 500;
@@ -25,12 +25,12 @@
         $('#main-bottom-space').css('margin-bottom', (height+15)+'px');
     };
 
-    $(document).ready(() => {
-        $('#main-bottom').on('click', (e) => {
+    $(document).ready(function() {
+        $('#main-bottom').on('click', function(e) {
             update(true);
             e.stopPropagation();
         });
-        $('body').on('click', () => {
+        $('body').on('click', function() {
             update(false);
         });
 
@@ -41,11 +41,13 @@
     //默认显示面板
     Show.register("", {
         handle: function (msg) {
-            let showBox = $('<div class="show-box"></div>');
-            let showBoxTime = $('<div class="show-box-time"><span>'+new Date().format("hh:mm:ss")+'</span></div>');
+            var showBox = $('<div class="show-box"></div>');
+            var showBoxTime = $('<div class="show-box-time"><span>'+new Date().format("hh:mm:ss")+'</span></div>');
             showBox.append(showBoxTime);
-            let showBoxBody = $('<div class="show-box-body"></div>');
-            Color.format(msg).forEach(ele => showBoxBody.append(ele));
+            var showBoxBody = $('<div class="show-box-body"></div>');
+            Color.format(msg).forEach(function(ele) {
+                showBoxBody.append(ele);
+            });
             showBox.append(showBoxBody);
 
             //添加缓存
@@ -56,7 +58,7 @@
 
             //删除多余缓存
             while (shows.length > MAX_CACHES) {
-                let trim = shows.splice(0, 1);
+                var trim = shows.splice(0, 1);
                 trim[0].remove();
             }
         }

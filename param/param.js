@@ -1,7 +1,7 @@
 window.Param = (function () {
-    let log = new Logger(LogConstant.SOURCE_PARAM);
+    var log = new Logger(LogConstant.SOURCE_PARAM);
 
-    // let Pipes = {
+    // var Pipes = {
     //     plugin: {
     //         name: {
     //             key: value,
@@ -10,30 +10,30 @@ window.Param = (function () {
     // };
 
     //所有管道
-    let pipes = {};
+    var pipes = {};
 
-    // let TypeParam = {
+    // var TypeParam = {
     //     name: 'value'
     // }
 
-    // let IdParam = {
+    // var IdParam = {
     //     id-1: TypeParam,
     //     id-2: TypeParam
     // }
 
-    // let CommonParams = TypeParam
+    // var CommonParams = TypeParam
 
-    let commonParams = {};
+    var commonParams = {};
 
-    // let PlayerParams = TypeParam
+    // var PlayerParams = TypeParam
 
-    let playerParams = {};
+    var playerParams = {};
 
-    // let PageParams = IdParam
+    // var PageParams = IdParam
 
-    let pageParams = {};
+    var pageParams = {};
 
-    // let ListParams = {
+    // var ListParams = {
     //     id-1: {
     //         '0': TypeParam,
     //         '1': TypeParam,
@@ -44,27 +44,27 @@ window.Param = (function () {
     //     },
     // }
 
-    let listParams = {};
+    var listParams = {};
 
-    // let CmdParams = IdParam
+    // var CmdParams = IdParam
 
-    let cmdParams = {};
+    var cmdParams = {};
 
-    // let InputParams = IdParam
+    // var InputParams = IdParam
 
-    let inputParams = {};
+    var inputParams = {};
 
     /**
      * 获取全部变量定义
      * @param {string} str 可能包含变量的字符串
      * @return {Array} 变量定义数组,不为null可为空数组
      */
-    let getParams = function (str) {
-        let params = [];
+    var getParams = function (str) {
+        var params = [];
 
         if (str) {
             while (true) {
-                let matcher = ParamConstant.REGEX.exec(str);
+                var matcher = ParamConstant.REGEX.exec(str);
                 if (matcher === null) break;
                 params.push({
                     type: matcher[1],
@@ -80,10 +80,10 @@ window.Param = (function () {
      * 获取缺少的变量(会添加全部需要后端解析的变量)
      * @param params 需要的变量
      */
-    let getLackParams = function (id, params) {
-        let result = [];
+    var getLackParams = function (id, params) {
+        var result = [];
 
-        params.forEach(e => {
+        params.forEach(function(e) {
             //判断
             if (e.type === ParamConstant.TYPE_COMMON ||
                 e.type === ParamConstant.TYPE_PLAYER ||
@@ -104,15 +104,15 @@ window.Param = (function () {
      * @param {string} str 可能包含变量的字符串
      * @param {integer} listIndex 列表中的位置,从0开始,-1表示无列表
      */
-    let replaceParams = function (id, str, listIndex) {
+    var replaceParams = function (id, str, listIndex) {
         if (!str) return str;
         return str.replace(ParamConstant.REGEX, function (match, type, nameWithPipes) {
-            let pipes = nameWithPipes.split('|');
-            let name = pipes[0];
+            var pipes = nameWithPipes.split('|');
+            var name = pipes[0];
             pipes.splice(0, 1);
 
             //获取值
-            let value = getValue(id, type, name, listIndex);
+            var value = getValue(id, type, name, listIndex);
             return convertPipe(value, pipes);
         });
     };
@@ -121,12 +121,12 @@ window.Param = (function () {
      * 添加命令变量
      * @param {Object} args 命令变量,格式'名-值'映射,可选,默认无
      */
-    let setCmdParams = function (id, args) {
+    var setCmdParams = function (id, args) {
         if (args) {
             cmdParams[id] = args;
 
-            let typeParam = cmdParams[id];
-            for (let name in typeParam) {
+            var typeParam = cmdParams[id];
+            for (var name in typeParam) {
                 if (typeParam.hasOwnProperty(name)) {
                     ParamHandler.addChange(id, ParamConstant.TYPE_CMD, name);
                 }
@@ -137,10 +137,10 @@ window.Param = (function () {
     /**
      * 设置输入变量
      */
-    let setInputParams = function (id, typeParam) {
+    var setInputParams = function (id, typeParam) {
         inputParams[id] = typeParam;
 
-        for (let name in typeParam) {
+        for (var name in typeParam) {
             if (typeParam.hasOwnProperty(name)) {
                 ParamHandler.addChange(id, ParamConstant.TYPE_INPUT, name);
             }
@@ -150,7 +150,7 @@ window.Param = (function () {
     /**
      * 设置输入变量
      */
-    let setInputParam = function (id, name, value) {
+    var setInputParam = function (id, name, value) {
         if (!inputParams[id]) {
             inputParams[id] = {};
         }
@@ -163,17 +163,19 @@ window.Param = (function () {
         }
 
         //特殊情况,输入变量可能快速触发多次,因此通知改变加上延时好点
-        Common.debounce(Constant.DebounceTypePrefix_InputParam+id+name, () => ParamHandler.addChange(id, ParamConstant.TYPE_INPUT, name), 500);
+        Common.debounce(Constant.DebounceTypePrefix_InputParam+id+name, function() {
+            ParamHandler.addChange(id, ParamConstant.TYPE_INPUT, name);
+        }, 500);
     };
 
     /**
      * 刷新列表变量
      */
-    let refreshListParams = function (id) {
+    var refreshListParams = function (id) {
         //获取需要的列表变量
-        let params = [];
-        let pageInfo = Slot.getPageInfo(id);
-        PageConfig.getNeededListParams(pageInfo.path).forEach(e => {
+        var params = [];
+        var pageInfo = Slot.getPageInfo(id);
+        PageConfig.getNeededListParams(pageInfo.path).forEach(function(e) {
             params.push({
                 type: ParamConstant.TYPE_LIST,
                 name: e
@@ -186,10 +188,10 @@ window.Param = (function () {
     /**
      * 请求缺少的变量
      */
-    let requestLackParams = function (pageId, clearList) {
-        let pageInfo = Slot.getPageInfo(pageId);
-        let pageDef = PageConfig.getPage(pageInfo.path);
-        let lackParams = getLackParams(pageId, pageDef.params);
+    var requestLackParams = function (pageId, clearList) {
+        var pageInfo = Slot.getPageInfo(pageId);
+        var pageDef = PageConfig.getPage(pageInfo.path);
+        var lackParams = getLackParams(pageId, pageDef.params);
         if (lackParams.length > 0) requestParams(pageId, lackParams, clearList);
     };
 
@@ -197,10 +199,10 @@ window.Param = (function () {
      * 请求变量
      * @param clearList 是否清空列表
      */
-    let requestParams = function (pageId, params, clearList) {
+    var requestParams = function (pageId, params, clearList) {
         if (params && params.length > 0) {
-            let pageInfo = Slot.getPageInfo(pageId);
-            let pageDef = PageConfig.getPage(pageInfo.path).page;
+            var pageInfo = Slot.getPageInfo(pageId);
+            var pageDef = PageConfig.getPage(pageInfo.path).page;
             return Conn.send(PacketConstant.CLIENT200PARAM, {
                 pageId: pageId,
                 path: pageInfo.path,
@@ -219,7 +221,7 @@ window.Param = (function () {
      * 请求变量: 为命令服务
      * @return 返回promise
      */
-    let requestParamsForCmd = function (pageId, pagePath, params) {
+    var requestParamsForCmd = function (pageId, pagePath, params) {
         if (params && params.length > 0) {
             return Conn.send(PacketConstant.CLIENT200PARAM, {
                 pageId: pageId,
@@ -231,7 +233,7 @@ window.Param = (function () {
                 params: params
             }, true);
         }else {
-            let promise = $.Deferred();
+            var promise = $.Deferred();
             promise.resolve();
             return promise;
         }
@@ -242,10 +244,11 @@ window.Param = (function () {
      * @param listIndex 在列表中的位置,-1表示无列表
      * @return {string|null} 没有则返回null
      */
-    let getValue = function (id, type, name, listIndex) {
-        let typeContext = null;
+    var getValue = function (id, type, name, listIndex) {
+        var result;
+        var typeContext = null;
         if (type === ParamConstant.TYPE_CONTEXT) {
-            let result = getContextParam(id, name, listIndex);
+            result = getContextParam(id, name, listIndex);
             if (result === undefined) result = null;
             return result;
         }else if (type === ParamConstant.TYPE_COMMON) {
@@ -256,7 +259,7 @@ window.Param = (function () {
             typeContext = pageParams[id];
         }else if (type === ParamConstant.TYPE_LIST) {
             if (listIndex !== -1) {
-                let pathContext = listParams[id];
+                var pathContext = listParams[id];
                 if (pathContext) {
                     typeContext = pathContext[''+listIndex];
                 }
@@ -268,7 +271,7 @@ window.Param = (function () {
         }else throw '变量类型"'+type+'"无法处理!';
 
         if (typeContext) {
-            let result = typeContext[name];
+            result = typeContext[name];
             if (result === undefined) result = null;
             return result;
         }
@@ -280,13 +283,13 @@ window.Param = (function () {
      * 增加变量
      * @param paramInfo 变量信息
      */
-    let addParam = function (id, paramInfo) {
-        let type = paramInfo['type'];
-        let name = paramInfo['name'];
-        let value = paramInfo['value'];
-        let index = paramInfo['index'];
+    var addParam = function (id, paramInfo) {
+        var type = paramInfo['type'];
+        var name = paramInfo['name'];
+        var value = paramInfo['value'];
+        var index = paramInfo['index'];
 
-        let typeParam = null;
+        var typeParam = null;
         if (type === ParamConstant.TYPE_COMMON) {
             typeParam = commonParams;
         }else if (type === ParamConstant.TYPE_PLAYER) {
@@ -298,7 +301,7 @@ window.Param = (function () {
                 pageParams[id] = typeParam;
             }
         }else if (type === ParamConstant.TYPE_LIST) {
-            let pathContext = listParams[id];
+            var pathContext = listParams[id];
             if (!pathContext) {
                 pathContext = {};
                 listParams[id] = pathContext;
@@ -330,10 +333,10 @@ window.Param = (function () {
      * @param name 变量名
      * @param listIndex 列表中的位置
      */
-    let getContextParam = function (id, name, listIndex) {
-        let pageInfo = Slot.getPageInfo(id);
-        let pageDef = PageConfig.getPage(pageInfo.path).page;
-        let result = null;
+    var getContextParam = function (id, name, listIndex) {
+        var pageInfo = Slot.getPageInfo(id);
+        var pageDef = PageConfig.getPage(pageInfo.path).page;
+        var result = null;
         if (name === ParamConstant.CONTEXT_PARAM_TITLE) {
             result = replaceParams(id, pageDef['_title'], listIndex);
         }else if (name === ParamConstant.CONTEXT_PARAM_HAS_CONTEXT) {
@@ -353,8 +356,8 @@ window.Param = (function () {
         }else if (name === ParamConstant.CONTEXT_PARAM_LIST_PAGE_AMOUNT) {
             result = getListAmount(id);
         }else if (name === ParamConstant.CONTEXT_PARAM_LIST_PAGE_MAX) {
-            let listTotal = pageInfo.listTotal;
-            let pageSize = pageDef['_size'];
+            var listTotal = pageInfo.listTotal;
+            var pageSize = pageDef['_size'];
             if (listTotal && pageSize) result = Common.getMaxPage(listTotal, pageSize);
             else result = 1;
         }else if (name === ParamConstant.CONTEXT_PARAM_LIST_TOTAL) {
@@ -367,10 +370,10 @@ window.Param = (function () {
      * 获取当前列表项的数量
      * @return {int} 列表项的数量,>=0
      */
-    let getListAmount = function (id) {
-        let pathParams = listParams[id];
+    var getListAmount = function (id) {
+        var pathParams = listParams[id];
         if (!pathParams) return 0;
-        let index=-1;
+        var index=-1;
         while (true) {
             if (!pathParams[''+(++index)]) return index;
         }
@@ -382,22 +385,22 @@ window.Param = (function () {
      * @param {Array} pipeList 管道列表
      * @return {string} 转换后的值,不为null可为''
      */
-    let convertPipe = function (value, pipeList) {
+    var convertPipe = function (value, pipeList) {
         if (!value) value = '';
 
         if (pipeList) {
-            pipeList.forEach(pipe => {
+            pipeList.forEach(function(pipe) {
                 //解析
-                let args = Common.split(pipe, '-', 2);
-                let plugin = args[0];
-                let name = args[1];
-                let pluginHandler = pipes[plugin];
+                var args = Common.split(pipe, '-', 2);
+                var plugin = args[0];
+                var name = args[1];
+                var pluginHandler = pipes[plugin];
 
                 //转换
                 if (pluginHandler) {
-                    let nameHandler = pluginHandler[name];
+                    var nameHandler = pluginHandler[name];
                     if (nameHandler) {
-                        let result = nameHandler[value];
+                        var result = nameHandler[value];
                         if (result !== undefined) value = result;
                     }
                 }
@@ -408,10 +411,11 @@ window.Param = (function () {
 
     /**
      * 清空指定id指定类型的变量
-     * @param types 变量类型
+     * @param types 变量类型(因为es5不支持...的关系,定义中没写,但实际是有用的)
      */
-    let clear = function (pageId, ...types) {
-        types.forEach(e => {
+    var clear = function (pageId) {
+        for (var i=1;i<arguments.length;i++) {
+            var e = arguments[i];
             if (e === ParamConstant.TYPE_PAGE) {
                 delete pageParams[pageId];
             }else if (e === ParamConstant.TYPE_LIST) {
@@ -421,15 +425,15 @@ window.Param = (function () {
             }else if (e === ParamConstant.TYPE_INPUT) {
                 delete inputParams[pageId];
             }else throw '页面类型'+e+'不允许清空!';
-        });
+        }
     };
 
     /**
      * 清除指定的玩家变量
      * @param {string} param 变量名
      */
-    let clearPlayerParam = param => {
-        let value = playerParams[param];
+    var clearPlayerParam = function(param) {
+        var value = playerParams[param];
         if (value !== undefined && value !== null) {//的确存在
             //删除变量
             delete playerParams[param];
@@ -441,16 +445,16 @@ window.Param = (function () {
     /**
      * 清空所有玩家变量
      */
-    let clearPlayerParams = () => {
+    var clearPlayerParams = function() {
         //先获取全部玩家变量名
-        let names = [];
-        for (let key in playerParams) {
+        var names = [];
+        for (var key in playerParams) {
             if (playerParams.hasOwnProperty(key)) {
                 names.push(key);
             }
         }
         //遍历清除
-        names.forEach(name => {
+        names.forEach(function(name) {
             clearPlayerParam(name);
         });
     };
@@ -458,7 +462,7 @@ window.Param = (function () {
     /**
      * 清空指定id所有变量
      */
-    let clearAll = function (pageId) {
+    var clearAll = function (pageId) {
         clear(pageId, ParamConstant.TYPE_PAGE, ParamConstant.TYPE_LIST, ParamConstant.TYPE_CMD, ParamConstant.TYPE_INPUT);
 
         log.info(LogType.DETAIL, "清空页面ID'{0}'相关的所有变量.", pageId);
@@ -467,8 +471,8 @@ window.Param = (function () {
     //注册包处理器: 管道
     Conn.register(PacketConstant.SERVER5160PIPES, {
         handle: function (data) {
-            let plugin = data['plugin'];
-            let pipesList = data['pipes'];
+            var plugin = data['plugin'];
+            var pipesList = data['pipes'];
 
             //设置,会覆盖旧值
             pipes[plugin] = pipesList;
@@ -479,15 +483,15 @@ window.Param = (function () {
     Conn.register(PacketConstant.SERVER5200PARAM_RESULT, {
         handle: function (data) {
             //解析
-            let id = data['pageId'];
-            let path = data['path'];
-            let listTotal = data['listTotal'];
-            let clearList = data['clearList'];
-            let params = data['params'];
+            var id = data['pageId'];
+            var path = data['path'];
+            var listTotal = data['listTotal'];
+            var clearList = data['clearList'];
+            var params = data['params'];
 
             //更新页面信息
-            let pageInfo = Slot.getPageInfo(id);
-            let oldListTotal = pageInfo.listTotal;
+            var pageInfo = Slot.getPageInfo(id);
+            var oldListTotal = pageInfo.listTotal;
             if (oldListTotal !== listTotal) {
                 pageInfo.listTotal = listTotal;
                 //通知变量改变
@@ -496,7 +500,7 @@ window.Param = (function () {
                 ParamHandler.addChange(id, ParamConstant.TYPE_CONTEXT, ParamConstant.CONTEXT_PARAM_LIST_TOTAL);
             }
 
-            let listHasChange = false;
+            var listHasChange = false;
 
             if (clearList) {
                 //页面改变
@@ -507,7 +511,7 @@ window.Param = (function () {
                 ParamHandler.addChange(id, ParamConstant.TYPE_LIST);
             }
 
-            params.forEach(e => {
+            params.forEach(function(e) {
                 //添加变量
                 addParam(id, e);
                 //检测页面改变

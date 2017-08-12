@@ -1,12 +1,12 @@
 //格子管理
 //前端有哪些页面在哪个格子显示都缓存在这里
 window.Slot = (function () {
-    let log = new Logger(LogConstant.SOURCE_SLOT);
+    var log = new Logger(LogConstant.SOURCE_SLOT);
 
     // /**
     //  * 格子信息
     //  */
-    // let SlotInfo = {
+    // var SlotInfo = {
     //     path: path,              //tab路径
     //     canClose: true,          //是否可以关闭
     //     slotDom: slotDom,        //固定存在的
@@ -22,7 +22,7 @@ window.Slot = (function () {
     //     },
     // };
 
-    // let PageInfo = {
+    // var PageInfo = {
     //     id: id,
     //     path: path,
     //     rootCmd: '',        //根页面初始命令参数,默认无
@@ -41,56 +41,66 @@ window.Slot = (function () {
      * 格子信息
      * '格子路径 格子信息'的映射
      */
-    let slots = {};
+    var slots = {};
 
     //页面ID 页面信息
-    let pages = {};
+    var pages = {};
 
     //当前选中的格子路径,可以为null
-    let sel;
+    var sel;
 
     /**
      * 获取选择的格子路径
      */
-    let getSel = () => sel;
+    var getSel = function() {
+        return sel;
+    }
 
     /**
      * 获取全部格子信息
      */
-    let getSlotInfos = () => slots;
+    var getSlotInfos = function() {
+        return slots;
+    }
 
     /**
      * 获取全部页面信息
      */
-    let getPages = () => pages;
+    var getPages = function() {
+        return pages;
+    }
 
     /**
      * 获取格子信息
      */
-    let getSlotInfo = tabPath => slots[tabPath];
+    var getSlotInfo = function(tabPath) {
+        return slots[tabPath];
+    }
 
     /**
      * 获取页面信息
      * @return {Object} 页面信息,不存在返回null
      */
-    let getPageInfo = id => pages[id];
+    var getPageInfo = function(id) {
+        return pages[id];
+    }
 
     /**
      * 检测初始化输入默认值
      * 输入变量默认需要依赖其它变量才能生成
      * 时机: 第一次其它变量变完整时
      */
-    let checkInitDefault = pageId => {
-        let pageInfo = getPageInfo(pageId);
+    var checkInitDefault = function(pageId) {
+        var pageInfo = getPageInfo(pageId);
         //防止重复初始化
         if (!pageInfo.defaultInit) {
             //更新缓存
             pageInfo.defaultInit = true;
 
             //更新默认值,然后更新输入变量
-            let inputParams = {};
-            let inputDefaults = PageConfig.getPage(pageInfo.path).inputDefaults;
-            for (let name in inputDefaults) {
+            var inputParams = {};
+            var inputDefaults = PageConfig.getPage(pageInfo.path).inputDefaults;
+            for (var name in inputDefaults) {
                 if (inputDefaults.hasOwnProperty(name)) {
                     inputParams[name] = {
                         value: Param.replaceParams(pageId, inputDefaults[name], -1),
@@ -106,7 +116,7 @@ window.Slot = (function () {
     /**
      * 清除指定tab路径相关缓存
      */
-    let clear = tabPath => {
+    var clear = function(tabPath) {
         //如果正好选中要清除的格子,则取消选中格子
         if (sel === tabPath) {
             selSlot(null);
@@ -116,9 +126,9 @@ window.Slot = (function () {
         if (!slots[tabPath]) return;
 
         //删除页面
-        let slotInfo = slots[tabPath];
-        let infos = slotInfo.infos;
-        for (let pageId in infos) {
+        var slotInfo = slots[tabPath];
+        var infos = slotInfo.infos;
+        for (var pageId in infos) {
             if (infos.hasOwnProperty(pageId)) {
                 delete pages[pageId];
             }
@@ -136,12 +146,12 @@ window.Slot = (function () {
     /**
      * 返回主界面(即根界面)
      */
-    let main = () => {
+    var main = function() {
         //当前没选中tab
         if(!sel) return;
 
-        let slotInfo = slots[sel];
-        let rootCmd = TabConfig.getRootCmd(slotInfo.path, slotInfo.pageIndex);
+        var slotInfo = slots[sel];
+        var rootCmd = TabConfig.getRootCmd(slotInfo.path, slotInfo.pageIndex);
         join(TabConfig.getRootPath(slotInfo.path, slotInfo.idToIndexes[slotInfo.pageId]), null, rootCmd);
     };
 
@@ -151,11 +161,11 @@ window.Slot = (function () {
      * @param args 可选,默认无
      * @param rootCmd 可选,默认无
      */
-    let join = function (pagePath, args, rootCmd) {
+    var join = function (pagePath, args, rootCmd) {
         //当前没选中tab
         if (!sel) return;
 
-        let pageIndex = slots[sel].pageIndex;
+        var pageIndex = slots[sel].pageIndex;
 
         //添加历史
         History.add(sel, pageIndex, {
@@ -172,7 +182,7 @@ window.Slot = (function () {
      * 刷新
      * @param refreshPage 是否刷新整个页面,默认false
      */
-    let refresh = (refreshPage) => {
+    var refresh = function(refreshPage) {
         //当前没选中tab
         if (!sel) return;
 
@@ -180,7 +190,7 @@ window.Slot = (function () {
 
         if (refreshPage) {
             //重新显示页面
-            let pageInfo = getPageInfo(slots[sel].pageId);
+            var pageInfo = getPageInfo(slots[sel].pageId);
             show(pageInfo.path, pageInfo.args, pageInfo.rootCmd);
         }else {
             //请求缺少的变量
@@ -191,13 +201,13 @@ window.Slot = (function () {
     /**
      * 返回上一页
      */
-    let back = () => {
+    var back = function() {
         //当前没选中tab
         if (!sel) return;
 
-        let slotInfo = slots[sel];
-        let selIndex = slotInfo.idToIndexes[slotInfo.pageId];
-        let history = History.pop(sel, selIndex);
+        var slotInfo = slots[sel];
+        var selIndex = slotInfo.idToIndexes[slotInfo.pageId];
+        var history = History.pop(sel, selIndex);
         if (history) {
             //显示上一页
             show(history.path, history.args, history.rootCmd);
@@ -217,10 +227,10 @@ window.Slot = (function () {
      * @param pagePath 页面路径
      * @param args 可选,默认无
      */
-    let show = function (pagePath, args, rootCmd) {
-        let slotInfo = slots[sel];
-        let pageId = slotInfo.pageId;
-        let pageInfo = getPageInfo(pageId);
+    var show = function (pagePath, args, rootCmd) {
+        var slotInfo = slots[sel];
+        var pageId = slotInfo.pageId;
+        var pageInfo = getPageInfo(pageId);
 
         //清除Param
         Param.clearAll(pageId);
@@ -250,7 +260,7 @@ window.Slot = (function () {
      * 选中格子
      * @param {string|null} tabPath 可以为null表示取消选中格子
      */
-    let selSlot = tabPath => {
+    var selSlot = function(tabPath) {
         //与旧的一样
         if (sel === tabPath) return;
 
@@ -266,11 +276,11 @@ window.Slot = (function () {
     /**
      * 由页面id来选择格子
      */
-    let selSlotByPageId = pageId => {
+    var selSlotByPageId = function(pageId) {
         if (pageId) {
-            for (let tabPath in slots) {
+            for (var tabPath in slots) {
                 if (slots.hasOwnProperty(tabPath)) {
-                    for (let id in slots[tabPath].infos) {
+                    for (var id in slots[tabPath].infos) {
                         if (id === pageId) {
                             selSlot(tabPath);
                             return;
@@ -284,18 +294,18 @@ window.Slot = (function () {
     /**
      * 添加格子(如果已经增加,则会无反应)
      */
-    let addSlot = function (tabPath, tabDef, panelId, order, canClose) {
+    var addSlot = function (tabPath, tabDef, panelId, order, canClose) {
         //不重复增加
         if (slots[tabPath]) return;
 
-        let slotDom = $('<div class="slot panel"></div>');
-        let slotBodyDom = $('<div></div>');
+        var slotDom = $('<div class="slot panel"></div>');
+        var slotBodyDom = $('<div></div>');
         slotDom.append(slotBodyDom);
 
         //检测添加格子到面板
         Panel.addSlot(panelId, slotDom);
 
-        let slotInfo = {
+        var slotInfo = {
             path: tabPath,
             canClose: canClose,
             slotDom: slotDom,
@@ -307,7 +317,9 @@ window.Slot = (function () {
         slotDom.css('order', order);
 
         //事件
-        slotDom.on('click', () => selSlot(tabPath));
+        slotDom.on('click', function() {
+            selSlot(tabPath);
+        });
 
         //新建tab页面
         createTab(slotInfo, tabPath, tabDef);
@@ -325,24 +337,24 @@ window.Slot = (function () {
     /**
      * 创建tab页
      */
-    let createTab = (slotInfo, tabPath, tabDef) => {
+    var createTab = function(slotInfo, tabPath, tabDef) {
         //构建
-        let pageId = null;
-        let pageIndex = null;
-        let idToIndexes = {};
-        let infos = {};
+        var pageId = null;
+        var pageIndex = null;
+        var idToIndexes = {};
+        var infos = {};
 
         //显示
-        let tabDom = $('<div class="tab"></div>');
-        let tabHeaderDom = $('<div class="tab-header"></div>');
-        let tabBodyDom = $('<div class="tab-body"></div>');
+        var tabDom = $('<div class="tab"></div>');
+        var tabHeaderDom = $('<div class="tab-header"></div>');
+        var tabBodyDom = $('<div class="tab-body"></div>');
 
         //更新缓存
-        let pages = tabDef['pages'];
-        for (let i=0;i<pages.length;i++) {
-            let page = pages[i];
-            let pageInfo = createPage(page['path']);
-            let id = pageInfo.id;
+        var pages = tabDef['pages'];
+        for (var i=0;i<pages.length;i++) {
+            var page = pages[i];
+            var pageInfo = createPage(page['path']);
+            var id = pageInfo.id;
             idToIndexes[id] = i;
             infos[id] = pageInfo;
 
@@ -356,13 +368,17 @@ window.Slot = (function () {
             }
 
             //header
-            let tabHeaderItem = $('<span></span>');
+            var tabHeaderItem = $('<span></span>');
             tabHeaderItem.text(page['name']);
-            tabHeaderItem.on('click', () => changeTab(slotInfo, id));
+            (function (id) {
+                tabHeaderItem.on('click', function() {
+                    changeTab(slotInfo, id);
+                });
+            })(id);
             pageInfo.header = tabHeaderItem;
 
             //body
-            let tabBodyItem = $('<div></div>');
+            var tabBodyItem = $('<div></div>');
             pageInfo.body = tabBodyItem;
 
             //添加
@@ -402,10 +418,10 @@ window.Slot = (function () {
      * @param path 页面路径
      * @return {Object} 页面信息
      */
-    let createPage = path => {
+    var createPage = function(path) {
         //生成id
-        let id = Common.getRandomId(6);
-        let pageInfo = {
+        var id = Common.getRandomId(6);
+        var pageInfo = {
             id: id,
             path: path,
             page: 1,
@@ -417,7 +433,7 @@ window.Slot = (function () {
     /**
      * 改变tab页
      */
-    let changeTab = (slotInfo, pageId) => {
+    var changeTab = function(slotInfo, pageId) {
         //日志
         log.debug(LogType.OPERATE, '改变页面: {0}', getPageInfo(pageId).path);
 
@@ -435,18 +451,18 @@ window.Slot = (function () {
     /**
      * 更新显示
      */
-    let updateShow = slotInfo => {
+    var updateShow = function(slotInfo) {
         //请求页面
-        let pageInfo = getPageInfo(slotInfo.pageId);
-        let reqPagePromise = PageConfig.req(pageInfo.path);
+        var pageInfo = getPageInfo(slotInfo.pageId);
+        var reqPagePromise = PageConfig.req(pageInfo.path);
         //请求变量
-        let rootCmd = pageInfo.rootCmd;
-        let needParams = Param.getParams(rootCmd);
-        let lackParams = Param.getLackParams(slotInfo.pageId, needParams);
-        let reqParamsPromise = Param.requestParamsForCmd(slotInfo.pageId, pageInfo.path, lackParams);
+        var rootCmd = pageInfo.rootCmd;
+        var needParams = Param.getParams(rootCmd);
+        var lackParams = Param.getLackParams(slotInfo.pageId, needParams);
+        var reqParamsPromise = Param.requestParamsForCmd(slotInfo.pageId, pageInfo.path, lackParams);
 
         //等待两个都完成
-        $.when(reqParamsPromise, reqPagePromise).then((v1, v2) => {
+        $.when(reqParamsPromise, reqPagePromise).then(function(v1, v2) {
             //先添加变量(模拟收到包)(因为这里给处理了)
             if (v1) {
                 Conn.onReceive({
@@ -456,15 +472,15 @@ window.Slot = (function () {
                 });
             }
 
-            let pageInfo = getPageInfo(slotInfo.pageId);
+            var pageInfo = getPageInfo(slotInfo.pageId);
             if (!pageInfo) return;
 
             //设置命令变量
             if (rootCmd) {
-                let args = {};
-                let rootCmdResult = Param.replaceParams(slotInfo.pageId, rootCmd, -1);
-                rootCmdResult.split(' ').forEach(s => {
-                    let ss = Common.split(s, '=', 2);
+                var args = {};
+                var rootCmdResult = Param.replaceParams(slotInfo.pageId, rootCmd, -1);
+                rootCmdResult.split(' ').forEach(function(s) {
+                    var ss = Common.split(s, '=', 2);
                     args[ss[0]] = ss[1];
                 });
                 //更新变量
@@ -482,7 +498,7 @@ window.Slot = (function () {
                 pageInfo.domInit = true;
 
                 //创建页面dom
-                let pageDom = createPageDom(slotInfo.pageId);
+                var pageDom = createPageDom(slotInfo.pageId);
                 //更新body
                 pageInfo.body.empty();
                 pageInfo.body.append(pageDom);
@@ -500,11 +516,11 @@ window.Slot = (function () {
      * 创建页面dom
      * @param id 页面id
      */
-    let createPageDom = id => {
-        let pageInfo = getPageInfo(id);
-        let pageDef = PageConfig.getPage(pageInfo.path);
+    var createPageDom = function(id) {
+        var pageInfo = getPageInfo(id);
+        var pageDef = PageConfig.getPage(pageInfo.path);
         if (pageDef) {
-            let page = pageDef['page'];
+            var page = pageDef['page'];
 
             //未启用
             if (!page['_enable']) throw '页面未启用!';
@@ -519,7 +535,7 @@ window.Slot = (function () {
     /**
      * 检测更新顶部按钮状态
      */
-    let updateTopStatus = () => {
+    var updateTopStatus = function() {
         //返回
         $('#top-back').prop('disabled', !sel || !History.hasBack(sel, slots[sel].pageIndex));
         //主页
@@ -534,10 +550,10 @@ window.Slot = (function () {
      * 检测更新所有格子的状态(边框效果)
      * @param {string|null} tabPath 可以为null
      */
-    let updateSlotStatus = tabPath => {
-        for (let key in slots) {
+    var updateSlotStatus = function(tabPath) {
+        for (var key in slots) {
             if (slots.hasOwnProperty(key)) {
-                let slotInfo = slots[key];
+                var slotInfo = slots[key];
                 if (key === tabPath) slotInfo.slotDom.addClass('slot-active');
                 else slotInfo.slotDom.removeClass('slot-active');
             }
@@ -547,10 +563,10 @@ window.Slot = (function () {
     /**
      * 检测更新tab页的显示状态(显示/隐藏)
      */
-    let updateTabStatus = slotInfo => {
-        for (let id in slotInfo.infos) {
+    var updateTabStatus = function(slotInfo) {
+        for (var id in slotInfo.infos) {
             if (slotInfo.infos.hasOwnProperty(id)) {
-                let pageInfo = getPageInfo(id);
+                var pageInfo = getPageInfo(id);
                 if (id === slotInfo.pageId) {
                     pageInfo.header.addClass('active');
                     pageInfo.body.show();
@@ -563,7 +579,9 @@ window.Slot = (function () {
     };
 
     //初始更新顶部按钮
-    $(document).ready(() => updateTopStatus());
+    $(document).ready(function() {
+        updateTopStatus()
+    });
 
     return {
         addSlot: addSlot,

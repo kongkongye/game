@@ -1,9 +1,9 @@
 //负责解析服务端返回的页面配置
 window.PageConfig = (function () {
-    let log = new Logger(LogConstant.SOURCE_PAGE);
+    var log = new Logger(LogConstant.SOURCE_PAGE);
 
     // //页面定义格式
-    // let PageDef = {
+    // var PageDef = {
     //     page: {},
     //     params: [{
     //         type: "common",
@@ -16,13 +16,13 @@ window.PageConfig = (function () {
     // };
 
     //路径 页面定义
-    let pages = {};
+    var pages = {};
 
     /**
      * 获取页面的列表大小
      * @return {int} >=1
      */
-    let getListSize = function (path) {
+    var getListSize = function (path) {
         return getPage(path).page['_size'] || 10;
     };
 
@@ -30,7 +30,7 @@ window.PageConfig = (function () {
      * 获取页面的全部行
      * @return {Array} 不为null
      */
-    let getLines = function (path) {
+    var getLines = function (path) {
         return getPage(path).page.lines || [];
     };
 
@@ -38,9 +38,9 @@ window.PageConfig = (function () {
      * 获取需要的列表变量
      * @return {Array} 需要的列表变量数组,项为变量名字符串
      */
-    let getNeededListParams = function (path) {
-        let neededListParams = [];
-        pages[path].params.forEach(e => {
+    var getNeededListParams = function (path) {
+        var neededListParams = [];
+        pages[path].params.forEach(function(e) {
             if (e.type === ParamConstant.TYPE_LIST) {
                 neededListParams.push(e.name);
             }
@@ -51,7 +51,7 @@ window.PageConfig = (function () {
     /**
      * 获取完整的页面定义
      */
-    let getPage = function (path) {
+    var getPage = function (path) {
         return pages[path];
     };
 
@@ -60,12 +60,12 @@ window.PageConfig = (function () {
      * @param path 路径
      * @param {string} page 页面内容
      */
-    let addPage = function (path, page) {
+    var addPage = function (path, page) {
         //日志
         log.info(LogType.FUNC, '添加定义: {0}', path);
 
         //定义
-        let def = {
+        var def = {
             inputDefaults: {},
             dependPaths: []
         };
@@ -79,18 +79,18 @@ window.PageConfig = (function () {
     /**
      * 读取页面
      */
-    let loadPage = function (def, page) {
-        let attrs = page.attributes;
+    var loadPage = function (def, page) {
+        var attrs = page.attributes;
 
-        let enable = getBoolean(attrs['enable'], true);
-        let title = getString(attrs['title'], null);
-        let size = getInt(attrs['size'], 1);
-        let context = getString(attrs['context'], '');
-        let contextPlugin = context.split(':')[0];
-        let contextKey = context.indexOf(':') !== -1?context.split(':')[1]:'';
-        let virtualLines = [];
+        var enable = getBoolean(attrs['enable'], true);
+        var title = getString(attrs['title'], null);
+        var size = getInt(attrs['size'], 1);
+        var context = getString(attrs['context'], '');
+        var contextPlugin = context.split(':')[0];
+        var contextKey = context.indexOf(':') !== -1?context.split(':')[1]:'';
+        var virtualLines = [];
 
-        page.childNodes.forEach(e => {
+        page.childNodes.forEach(function(e) {
             if (e.nodeType === 1) {
                 virtualLines.push(loadVirtualLine(def, e));
             }
@@ -111,8 +111,8 @@ window.PageConfig = (function () {
      * 读取虚拟行
      * @param {Object} virtualLine 虚拟行对象
      */
-    let loadVirtualLine = function (def, virtualLine) {
-        let type = virtualLine.nodeName;
+    var loadVirtualLine = function (def, virtualLine) {
+        var type = virtualLine.nodeName;
         if (type === 'line') {
             return loadLine(def, virtualLine);
         }else if (type === 'list') {
@@ -127,13 +127,13 @@ window.PageConfig = (function () {
     /**
      * 读取行
      */
-    let loadLine = function (def, virtualLine) {
-        let attrs = virtualLine.attributes;
+    var loadLine = function (def, virtualLine) {
+        var attrs = virtualLine.attributes;
 
-        let con = getString(attrs['con'], null);
-        let align = getString(attrs['align'], null);
-        let components = [];
-        virtualLine.childNodes.forEach(e => {
+        var con = getString(attrs['con'], null);
+        var align = getString(attrs['align'], null);
+        var components = [];
+        virtualLine.childNodes.forEach(function(e) {
             if (e.nodeType === 1) {
                 components.push(loadComponent(def, e));
             }
@@ -149,13 +149,13 @@ window.PageConfig = (function () {
     /**
      * 读取列表
      */
-    let loadList = function (def, virtualLine) {
-        let attrs = virtualLine.attributes;
+    var loadList = function (def, virtualLine) {
+        var attrs = virtualLine.attributes;
 
-        let con = getString(attrs['con'], null);
-        let lines = [];
+        var con = getString(attrs['con'], null);
+        var lines = [];
 
-        virtualLine.childNodes.forEach(e => {
+        virtualLine.childNodes.forEach(function(e) {
             if (e.nodeType === 1) {
                 lines.push(loadVirtualLine(def, e))
             }
@@ -170,10 +170,10 @@ window.PageConfig = (function () {
     /**
      * 读取分隔行
      */
-    let loadBr = function (def, virtualLine) {
-        let attrs = virtualLine.attributes;
+    var loadBr = function (def, virtualLine) {
+        var attrs = virtualLine.attributes;
 
-        let con = getString(attrs['con'], null);
+        var con = getString(attrs['con'], null);
         return {
             type: 'br',
             _con: con
@@ -183,10 +183,10 @@ window.PageConfig = (function () {
     /**
      * 读取导入
      */
-    let loadImport = function (def, virtualLine) {
-        let attrs = virtualLine.attributes;
+    var loadImport = function (def, virtualLine) {
+        var attrs = virtualLine.attributes;
 
-        let path = getString(attrs['path'], null);
+        var path = getString(attrs['path'], null);
         if (path) def.dependPaths.push(path);
 
         return {
@@ -198,8 +198,8 @@ window.PageConfig = (function () {
     /**
      * 读取组件
      */
-    let loadComponent = function (def, component) {
-        let type = component.nodeName;
+    var loadComponent = function (def, component) {
+        var type = component.nodeName;
         if (type === 'text') {
             return loadText(def, component);
         }else if (type === 'button') {
@@ -214,14 +214,14 @@ window.PageConfig = (function () {
     /**
      * 读取文本
      */
-    let loadText = function (def, component) {
-        let attrs = component.attributes;
+    var loadText = function (def, component) {
+        var attrs = component.attributes;
 
-        let con = getString(attrs['con'], null);
-        let style = getString(attrs['style'], null);
-        let width = getInt(attrs['width'], 0);
-        let align = getString(attrs['align'], null);
-        let content = component.textContent;
+        var con = getString(attrs['con'], null);
+        var style = getString(attrs['style'], null);
+        var width = getInt(attrs['width'], 0);
+        var align = getString(attrs['align'], null);
+        var content = component.textContent;
         return {
             type: 'text',
             _con: con,
@@ -235,15 +235,15 @@ window.PageConfig = (function () {
     /**
      * 读取按钮
      */
-    let loadButton = function (def, component) {
-        let attrs = component.attributes;
+    var loadButton = function (def, component) {
+        var attrs = component.attributes;
 
-        let con = getString(attrs['con'], null);
-        let style = getString(attrs['style'], null);
-        let width = getInt(attrs['width'], 0);
-        let cmd = getString(attrs['cmd'], null);
-        let mode = getString(attrs['mode'], null);
-        let content = component.textContent;
+        var con = getString(attrs['con'], null);
+        var style = getString(attrs['style'], null);
+        var width = getInt(attrs['width'], 0);
+        var cmd = getString(attrs['cmd'], null);
+        var mode = getString(attrs['mode'], null);
+        var content = component.textContent;
         return {
             type: 'button',
             _con: con,
@@ -258,18 +258,18 @@ window.PageConfig = (function () {
     /**
      * 读取输入
      */
-    let loadInput = function (def, component) {
-        let attrs = component.attributes;
+    var loadInput = function (def, component) {
+        var attrs = component.attributes;
 
-        let con = getString(attrs['con'], null);
-        let style = getString(attrs['style'], null);
-        let width = getInt(attrs['width'], 0);
-        let name = getString(attrs['name'], null);
-        let type = getString(attrs['type'], null);
-        let _default = getString(attrs['default'], null);
-        let description = getString(attrs['description'], null);
-        let fixWidth = getInt(attrs['fix-width'], 0);
-        let multi = getBoolean(attrs['multi'], false);
+        var con = getString(attrs['con'], null);
+        var style = getString(attrs['style'], null);
+        var width = getInt(attrs['width'], 0);
+        var name = getString(attrs['name'], null);
+        var type = getString(attrs['type'], null);
+        var _default = getString(attrs['default'], null);
+        var description = getString(attrs['description'], null);
+        var fixWidth = getInt(attrs['fix-width'], 0);
+        var multi = getBoolean(attrs['multi'], false);
 
         //添加进输入变量默认值
         if (_default) {
@@ -293,16 +293,16 @@ window.PageConfig = (function () {
     /**
      * 读取容器
      */
-    let loadContainer = function (def, component) {
-        let attrs = component.attributes;
+    var loadContainer = function (def, component) {
+        var attrs = component.attributes;
 
-        let con = getString(attrs['con'], null);
-        let style = getString(attrs['style'], null);
-        let width = getInt(attrs['width'], 0);
-        let align = getString(attrs['align'], null);
-        let components = [];
+        var con = getString(attrs['con'], null);
+        var style = getString(attrs['style'], null);
+        var width = getInt(attrs['width'], 0);
+        var align = getString(attrs['align'], null);
+        var components = [];
 
-        component.childNodes.forEach(e => {
+        component.childNodes.forEach(function(e) {
             if (e.nodeType === 1) {
                 components.push(loadComponent(def, e))
             }
@@ -318,17 +318,17 @@ window.PageConfig = (function () {
         };
     };
 
-    let getString = function (attr, def) {
+    var getString = function (attr, def) {
         if (attr) return (attr.value || attr.value === '')?attr.value:def;
         else return def;
     };
 
-    let getBoolean = function (attr, def) {
+    var getBoolean = function (attr, def) {
         if (attr) return attr.value+'' === 'true';
         else return def;
     };
 
-    let getInt = function (attr, def) {
+    var getInt = function (attr, def) {
         if (!attr) return def;
         return parseInt(attr.value);
     };
@@ -336,18 +336,18 @@ window.PageConfig = (function () {
     /**
      * 请求页面(内部会递归请求依赖页面)
      */
-    let req = function (path) {
-        let promise = $.Deferred();
+    var req = function (path) {
+        var promise = $.Deferred();
         if (getPage(path)) {//页面已加载了,不用再请求
             promise.resolve();
         }else {//页面未加载
             Conn.send(PacketConstant.CLIENT190PAGE, {
                 path: path
-            }, true).then(e => {
+            }, true).then(function(e) {
                 //解析
-                let data = e.data;
-                let path = data['path'];
-                let page = data['page'];
+                var data = e.data;
+                var path = data['path'];
+                var page = data['page'];
 
                 //页面定义已经有了,不重复添加
                 if (getPage(path)) {
@@ -361,8 +361,8 @@ window.PageConfig = (function () {
 
                 //还需要加载依赖页面呢
                 //所有依赖的promise
-                let dependPromises = [];
-                getPage(path).dependPaths.forEach(e => {
+                var dependPromises = [];
+                getPage(path).dependPaths.forEach(function(e) {
                     if (!getPage(e)) {//依赖页面未加载
                         dependPromises.push(req(e));
                     }
@@ -377,7 +377,7 @@ window.PageConfig = (function () {
                     //失败解析
                     promise.reject(reason);
                 });
-            }, (reason) => {
+            }, function(reason) {
                 promise.reject(reason);
             });
         }

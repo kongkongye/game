@@ -1,13 +1,13 @@
 //连接的ws实现
-let Ws = (function () {
-    let log = new Logger(LogConstant.SOURCE_CONN);
+var Ws = (function () {
+    var log = new Logger(LogConstant.SOURCE_CONN);
 
-    let client;
+    var client;
 
     /**
      * 是否已连接
      */
-    let isConnected = function () {
+    var isConnected = function () {
         return client && client.readyState === 1;
     };
 
@@ -15,8 +15,8 @@ let Ws = (function () {
      * 连接
      * @return promise
      */
-    let connect = function () {
-        let promise = $.Deferred();
+    var connect = function () {
+        var promise = $.Deferred();
 
         //新建连接
         client = new WebSocket(ConnConstant.URL);
@@ -33,7 +33,6 @@ let Ws = (function () {
             //连接出错
             client.onerror = function (event) {
                 console.log(arguments)
-
             };
 
             //连接关闭
@@ -41,9 +40,9 @@ let Ws = (function () {
                 client = null;
 
                 //幕布
-                let mask = $("<div class='mask'></div>");
+                var mask = $("<div class='mask'></div>");
                 $('body').append(mask);
-                let maskText = $("<div class='mask-text'><button class='btn' onclick='window.location.reload()'>刷新</button></div>");
+                var maskText = $("<div class='mask-text'><button class='btn' onclick='window.location.reload()'>刷新</button></div>");
                 $('body').append(maskText);
 
                 //提示
@@ -66,7 +65,7 @@ let Ws = (function () {
     /**
      * 断开连接
      */
-    let disconnect = function () {
+    var disconnect = function () {
         client.close();
         client = null;
     };
@@ -75,7 +74,7 @@ let Ws = (function () {
      * 发送数据(连接已断开则不会发送)
      * @param {Object} data 数据(包格式)
      */
-    let send = function (data) {
+    var send = function (data) {
         if (isConnected()) {
             //格式化
             formatJson(data);
@@ -89,11 +88,11 @@ let Ws = (function () {
     /**
      * 格式化json
      */
-    let formatJson = json => {
-        for (let key in json) {
+    var formatJson = function(json) {
+        for (var key in json) {
             if (json.hasOwnProperty(key)) {
-                let value = json[key];
-                let type = typeof value;
+                var value = json[key];
+                var type = typeof value;
                 if (type === 'object') {
                     formatJson(value);
                 }else if (type === 'string') {

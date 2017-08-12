@@ -26,15 +26,15 @@ $.whenall = function(arr) {
 
 window.Common = (function () {
     //'key Debouncer'的映射
-    let debounces = {};
+    var debounces = {};
 
     /**
      * 字符串去重复字符
      * @return {string} 去除重复字符后的字符串
      */
-    let getUniqueChars = function(str) {
-        let unique = '';
-        for (let i = 0; i < str.length; i++) {
+    var getUniqueChars = function(str) {
+        var unique = '';
+        for (var i = 0; i < str.length; i++) {
             if (str.lastIndexOf(str[i]) === str.indexOf(str[i])) {
                 unique += str[i];
             }
@@ -46,11 +46,11 @@ window.Common = (function () {
      * 获取随机id
      * @param length id长度
      */
-    let getRandomId = function (length) {
-        let text = "";
-        let possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+    var getRandomId = function (length) {
+        var text = "";
+        var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
 
-        for (let i = 0; i < length; i++)
+        for (var i = 0; i < length; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
 
         return text;
@@ -60,7 +60,7 @@ window.Common = (function () {
      * 获取随机long值
      * @return {number}
      */
-    let getRandomLong = function () {
+    var getRandomLong = function () {
         return Math.floor(100000000 + Math.random() * 900000000);
     };
 
@@ -70,7 +70,7 @@ window.Common = (function () {
      * @param pageSize 分页大小,<=0时返回0
      * @return {int} 最大页面数,>=1,无元素时返回0
      */
-    let getMaxPage = function (total, pageSize) {
+    var getMaxPage = function (total, pageSize) {
         if (total <= 0 || pageSize <= 0) return 0;
         if (total%pageSize === 0) return parseInt(total/pageSize);
         return parseInt(total/pageSize+1);
@@ -80,9 +80,9 @@ window.Common = (function () {
      * 分割字符串
      * 如str为'a b c',separator为' ',max为2,则结果为['a', 'b c']
      */
-    let split = function (str, separator, max) {
-        let arr = str.split(separator);
-        let result = arr.splice(0, max-1);
+    var split = function (str, separator, max) {
+        var arr = str.split(separator);
+        var result = arr.splice(0, max-1);
         result.push(arr.join(separator));
         return result;
     };
@@ -91,23 +91,23 @@ window.Common = (function () {
     // be triggered. The function will be called after it stops being called for
     // N milliseconds. If `immediate` is passed, trigger the function on the
     // leading edge, instead of the trailing.
-    let Debouncer = (func, wait, immediate) => {
-        let timeout;
+    var Debouncer = function(func, wait, immediate) {
+        var timeout;
         return function() {
-            let context = this, args = arguments;
-            let later = function() {
+            var context = this, args = arguments;
+            var later = function() {
                 timeout = null;
                 if (!immediate) func.apply(context, args);
             };
-            let callNow = immediate && !timeout;
+            var callNow = immediate && !timeout;
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
             if (callNow) func.apply(context, args);
         };
     };
 
-    let debounce = (key, func, wait, immediate) => {
-        let debouncer = debounces[key];
+    var debounce = function(key, func, wait, immediate) {
+        var debouncer = debounces[key];
         if (!debouncer) {
             debouncer = Debouncer(func, wait, immediate);
             debounces[key] = debouncer;
@@ -118,14 +118,12 @@ window.Common = (function () {
     /**
      * 转换变量
      * @param {string} content 可以包含变量{0},{1}...
-     * @param args 变量列表,可选,默认无
+     * @param args 变量列表,可选,默认无(因为es5不支持...的关系,定义中没写,但实际是有用的)
      * @return {string} 转换后的值
      */
-    let convert = (content, ...args) => {
-        if (args) {
-            for (let i=0;i<args.length;i++) {
-                content = content.replace('{'+i+'}', args[i]);
-            }
+    var convert = function(content) {
+        for (var i=1;i<arguments.length;i++) {
+            content = content.replace('{'+(i-1)+'}', arguments[i]);
         }
         return content;
     };

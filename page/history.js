@@ -4,22 +4,22 @@ window.History = (function () {
     // /**
     //  * 历史信息
     //  */
-    // let History = [{
+    // var History = [{
     //     path: pagePath,
     //     rootCmd: '',
     //     args: args,
     // },];
 
-    let log = new Logger(LogConstant.SOURCE_HISTORY);
+    var log = new Logger(LogConstant.SOURCE_HISTORY);
 
     //'格子id:tab位置 历史信息'的映射
-    let historys = {};
+    var historys = {};
 
     /**
      * 添加历史
      */
-    let add = (tabPath, tabIndex, history) => {
-        let id = tabPath+":"+tabIndex;
+    var add = function(tabPath, tabIndex, history) {
+        var id = tabPath+":"+tabIndex;
         historys[id] = historys[id] || [];
         historys[id].push(history);
         //检测上限
@@ -32,9 +32,9 @@ window.History = (function () {
      * 弹出当前层,返回上一层历史
      * @return {{}|null} 历史或null
      */
-    let pop = (tabPath, tabIndex) => {
-        let id = tabPath+":"+tabIndex;
-        let history = historys[id];
+    var pop = function(tabPath, tabIndex) {
+        var id = tabPath+":"+tabIndex;
+        var history = historys[id];
         if (history) {
             if (history.length > 0) {
                 //删除当前层
@@ -50,28 +50,30 @@ window.History = (function () {
      * 检测是否有上一层
      * @return {boolean}
      */
-    let hasBack = (tabPath, tabIndex) => {
-        let id = tabPath+":"+tabIndex;
-        let history = historys[id];
+    var hasBack = function(tabPath, tabIndex) {
+        var id = tabPath+":"+tabIndex;
+        var history = historys[id];
         return history && history.length >= 2;
     };
 
     /**
      * 清空指定tab路径相关的缓存
      */
-    let clear = tabPath => {
-        let del = [];
+    var clear = function(tabPath) {
+        var del = [];
 
         //找出所有相关历史
-        for (let key in historys) {
+        for (var key in historys) {
             if (historys.hasOwnProperty(key)) {
-                let args = key.split(':');
+                var args = key.split(':');
                 if (args[0] === tabPath) del.push(key);
             }
         }
 
         //再删除
-        del.forEach(key => delete historys[key]);
+        del.forEach(function(key) {
+            delete historys[key];
+        });
 
         //日志
         log.info(LogType.DETAIL, "清空tab路径'{0}'相关历史.", tabPath);

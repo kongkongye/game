@@ -1,10 +1,10 @@
 /**
  * 条件格式: '类型:值'
  */
-window.Con = (() => {
-    let log = new Logger(LogConstant.SOURCE_CON);
+window.Con = (function() {
+    var log = new Logger(LogConstant.SOURCE_CON);
 
-    // let Handler = {
+    // var Handler = {
     //     //获取全部条件变量(返回string),可为null
     //     getParams: str => {
     //         return ['name1', 'name2', ];
@@ -15,14 +15,14 @@ window.Con = (() => {
     // };
 
     //类型 处理器
-    let handlers = {};
+    var handlers = {};
 
     /**
      * 注册条件处理器
      * @param {string} type 类型
      * @param {Function} handler 处理器
      */
-    let register = (type, handler) => {
+    var register = function(type, handler) {
         handlers[type] = handler;
 
         //日志
@@ -34,9 +34,9 @@ window.Con = (() => {
      * @param con 条件
      * @return {boolean} 是否满足
      */
-    let check = con => {
+    var check = function(con) {
         //解析
-        let info = parse(con);
+        var info = parse(con);
         if (!info) return false;
 
         //返回检测结果
@@ -51,22 +51,24 @@ window.Con = (() => {
      * 添加变量
      * @param con
      */
-    let addParams = (pageId, con, handler) => {
+    var addParams = function(pageId, con, handler) {
         //解析
-        let info = parse(con);
+        var info = parse(con);
         if (!info) return false;
 
-        let params = info.handler.getParams(info.value);
+        var params = info.handler.getParams(info.value);
         if (!params) params = [];
-        params.forEach(param => ParamHandler.addConListener(pageId, handler.type, param, handler));
+        params.forEach(function(param) {
+            ParamHandler.addConListener(pageId, handler.type, param, handler);
+        });
     };
 
     /**
      * 解析条件
      * @return 解析出的条件信息,null表示解析失败
      */
-    let parse = con => {
-        let args = Common.split(con, ':', 2);
+    var parse = function(con) {
+        var args = Common.split(con, ':', 2);
 
         //条件值格式错误
         if (args.length !== 2) {
@@ -75,9 +77,9 @@ window.Con = (() => {
         }
 
         //解析
-        let type = args[0];
-        let value = args[1];
-        let handler = handlers[type];
+        var type = args[0];
+        var value = args[1];
+        var handler = handlers[type];
 
         //条件处理器不存在
         if (!handler) {

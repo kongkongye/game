@@ -1,27 +1,27 @@
 window.Splitor = function (content) {
     //普通文本开始的位置,-1表示未开始
-    let textIndex = -1;
+    var textIndex = -1;
     //当前位置
-    let index = -1;
+    var index = -1;
 
     //固化信息(颜色&格式&换行)
     //颜色
-    let color = '';
+    var color = '';
     //格式
-    let formats = '';
+    var formats = '';
 
-    let result = [];
+    var result = [];
 
     /**
      * 检测加上前面的普通文本
      * @param end 最后位置(包含)
      */
-    let addPreText = function (end) {
+    var addPreText = function (end) {
         //前面没有普通文本,直接返回
         if (textIndex === -1) return;
 
         //信息
-        let info = {
+        var info = {
             color: ''
         };
 
@@ -34,7 +34,9 @@ window.Splitor = function (content) {
         //再加格式
         if (formats) {
             //添加
-            formats.split('').forEach(format => info['color'] += ColorConstant.CHAR+format);
+            formats.split('').forEach(function(format) {
+                info['color'] += ColorConstant.CHAR+format;
+            });
         }
 
         //普通字符
@@ -63,7 +65,7 @@ window.Splitor = function (content) {
             index++;
 
             //固化
-            let c = content.charAt(index);
+            var c = content.charAt(index);
             if (Color.isChar(c)) {//颜色字符开头,可能是颜色或格式
                 //后面已经没有内容
                 if (index >= content.length-1) {
@@ -72,7 +74,7 @@ window.Splitor = function (content) {
                 }
 
                 //下个字符
-                let c2 = content.charAt(++index);
+                var c2 = content.charAt(++index);
                 //是颜色
                 if (Color.isColor(c2)) {//特点: 颜色不能累积,且会清除格式
                     //先检测前面的普通文本加上

@@ -4,17 +4,17 @@
  * (变量值改变时通知处理器)
  */
 window.ParamHandler = (function () {
-    let log = new Logger(LogConstant.SOURCE_PARAM_HANDLER);
+    var log = new Logger(LogConstant.SOURCE_PARAM_HANDLER);
 
-    // let Handler = function () {};
+    // var Handler = function () {};
     //
-    // let NoIdHandler = {
+    // var NoIdHandler = {
     //     type: {
     //         name: [Handler,]
     //     }
     // };
     //
-    // let IdHandler = {
+    // var IdHandler = {
     //     id: {   //页面id
     //         type: {
     //             name: [Handler,]
@@ -24,22 +24,22 @@ window.ParamHandler = (function () {
 
     //没有页面id的处理器列表
     //适合: common,player
-    let noIdHandlers = {};
+    var noIdHandlers = {};
 
     //有页面id的处理器列表
     //适合: page,list,cmd,input,context
-    let idHandlers = {};
+    var idHandlers = {};
 
-    // let ListListeners = {
+    // var ListListeners = {
     //     id: [function (listAmount) {
     //
     //     }]
     // };
 
-    let listListeners = {};
+    var listListeners = {};
 
     // //条件处理器
-    // let ConHandlers = {
+    // var ConHandlers = {
     //     id: {          //页面id
     //         type: {    //条件类型
     //             name: [Handler,]
@@ -47,14 +47,14 @@ window.ParamHandler = (function () {
     //     },
     // };
 
-    let conHandlers = {};
+    var conHandlers = {};
     //缓冲(防止冗余的重复刷新)
     //'id:type:name true'的映射
-    let conWaits = {};
+    var conWaits = {};
 
     //缓冲(防止冗余的重复刷新)
     //'id:type:name true'的映射
-    let waits = {};
+    var waits = {};
 
     /**
      * 添加条件监听
@@ -63,7 +63,7 @@ window.ParamHandler = (function () {
      * @param name 变量名(条件自行解析的)
      * @param handler 处理器
      */
-    let addConListener = (id, type, name, handler) => {
+    var addConListener = function(id, type, name, handler) {
         conHandlers[id] = conHandlers[id] || {};
         conHandlers[id][type] = conHandlers[id][type] || {};
         conHandlers[id][type][name] = conHandlers[id][type][name] || [];
@@ -74,7 +74,7 @@ window.ParamHandler = (function () {
      * 删除条件监听
      * @param pageId
      */
-    let delConListener = pageId => {
+    var delConListener = function(pageId) {
         delete conHandlers[pageId];
 
         log.info(LogType.DETAIL, "清空页面ID'{0}'相关的所有条件处理器.", pageId);
@@ -86,7 +86,7 @@ window.ParamHandler = (function () {
      * @param type 条件类型
      * @param name 变量名(条件自行解析的),null表示全部变量名
      */
-    let addConChange = (id, type, name) => {
+    var addConChange = function(id, type, name) {
         if (!id) id = '';
         if (!name) name = '';
         conWaits[id+":"+type+":"+name] = true;
@@ -95,7 +95,7 @@ window.ParamHandler = (function () {
     /**
      * 添加列表监听
      */
-    let addListListener = (id, handler) => {
+    var addListListener = function(id, handler) {
         listListeners[id] = listListeners[id] || [];
         listListeners[id].push(handler);
     };
@@ -103,7 +103,7 @@ window.ParamHandler = (function () {
     /**
      * 删除列表监听
      */
-    let delListListener = pageId => {
+    var delListListener = function(pageId) {
         delete listListeners[pageId];
 
         log.info(LogType.DETAIL, "清空页面ID'{0}'相关的所有列表处理器.", pageId);
@@ -112,22 +112,24 @@ window.ParamHandler = (function () {
     /**
      * 添加列表改变
      */
-    let addListChange = (id, listAmount) => {
-        let listListener = listListeners[id];
-        if (listListener) listListener.forEach(handler => handler(listAmount));
+    var addListChange = function(id, listAmount) {
+        var listListener = listListeners[id];
+        if (listListener) listListener.forEach(function(handler) {
+            handler(listAmount)
+        });
     };
 
     /**
      * 添加变量定义
      * @param id 页面ID
      */
-    let addParams = (id, params) => {
-        params.forEach(e => {
-            let type = e.type;
-            let name = e.name;
-            let handler = e.handler;
+    var addParams = function(id, params) {
+        params.forEach(function(e) {
+            var type = e.type;
+            var name = e.name;
+            var handler = e.handler;
 
-            let typeHandlers;
+            var typeHandlers;
 
             if (type === ParamConstant.TYPE_COMMON ||
                 type === ParamConstant.TYPE_PLAYER) {
@@ -144,12 +146,12 @@ window.ParamHandler = (function () {
                 }
             }else throw "变量类型'"+type+"'无法处理!";
 
-            let typeHandler = typeHandlers[type];
+            var typeHandler = typeHandlers[type];
             if (!typeHandler) {
                 typeHandler = {};
                 typeHandlers[type] = typeHandler;
             }
-            let nameHandler = typeHandler[name];
+            var nameHandler = typeHandler[name];
             if (!nameHandler) {
                 nameHandler = [];
                 typeHandler[name] = nameHandler;
@@ -164,7 +166,7 @@ window.ParamHandler = (function () {
     /**
      * 删除指定页面id的所有变量
      */
-    let delParams = pageId => {
+    var delParams = function(pageId) {
         delete idHandlers[pageId];
 
         log.info(LogType.DETAIL, "清空页面ID'{0}'相关的所有变量处理器.", pageId);
@@ -175,7 +177,7 @@ window.ParamHandler = (function () {
      * @param id type为common,player时不需要
      * @param name undefined或null时表示此类型下的全部名字变量都改变
      */
-    let addChange = (id, type, name) => {
+    var addChange = function(id, type, name) {
         if (!name) name = '';
         if (type === ParamConstant.TYPE_COMMON ||
             type === ParamConstant.TYPE_PLAYER) {
@@ -193,8 +195,8 @@ window.ParamHandler = (function () {
      * @param id type为common,player时不需要
      * @param name ''时表示此类型下全部变量名都更新
      */
-    let update = (id, type, name) => {
-        let typeHandlers;
+    var update = function(id, type, name) {
+        var typeHandlers;
         if (type === ParamConstant.TYPE_COMMON ||
             type === ParamConstant.TYPE_PLAYER) {
             typeHandlers = noIdHandlers;
@@ -207,17 +209,21 @@ window.ParamHandler = (function () {
         }else throw "变量类型'"+type+"'无法处理!";
 
         if (typeHandlers) {
-            let typeHandler = typeHandlers[type];
+            var typeHandler = typeHandlers[type];
             if (typeHandler) {
                 if (name) {
-                    let nameHandler = typeHandler[name];
+                    var nameHandler = typeHandler[name];
                     if (nameHandler) {
-                        nameHandler.forEach(handler => handler());
+                        nameHandler.forEach(function(handler) {
+                            handler()
+                        });
                     }
                 }else {
-                    for (let key in typeHandler) {
+                    for (var key in typeHandler) {
                         if (typeHandler.hasOwnProperty(key)) {
-                            typeHandler[key].forEach(handler => handler());
+                            typeHandler[key].forEach(function(handler) {
+                                handler()
+                            });
                         }
                     }
                 }
@@ -230,18 +236,22 @@ window.ParamHandler = (function () {
      * @param type 条件类型,不为null
      * @param name null表示全部变量
      */
-    let updateCon = (id, type, name) => {
-        let typeHandlers = conHandlers[id];
+    var updateCon = function(id, type, name) {
+        var typeHandlers = conHandlers[id];
         if (typeHandlers) {
-            let nameHandlers = typeHandlers[type];
+            var nameHandlers = typeHandlers[type];
             if (nameHandlers) {
                 if (name !== null) {//单个变量
-                    let handlers = nameHandlers[name];
-                    if (handlers) handlers.forEach(handler => handler());
+                    var handlers = nameHandlers[name];
+                    if (handlers) handlers.forEach(function(handler) {
+                        handler()
+                    });
                 }else {//全部变量
-                    for (let n in nameHandlers) {
+                    for (var n in nameHandlers) {
                         if (nameHandlers.hasOwnProperty(n)) {
-                            nameHandlers[n].forEach(handler => handler());
+                            nameHandlers[n].forEach(function(handler) {
+                                handler()
+                            });
                         }
                     }
                 }
@@ -250,11 +260,12 @@ window.ParamHandler = (function () {
     };
 
     //计时器: 刷新
-    setInterval(() => {
+    setInterval(function() {
+        var key, args;
         //遍历变量缓存
-        for (let key in waits) {
+        for (key in waits) {
             if (waits.hasOwnProperty(key)) {
-                let args = key.split(':');
+                args = key.split(':');
                 if (args.length === 2) {
                     update(null, args[0], args[1]);
                 }else if (args.length === 3) {
@@ -266,18 +277,18 @@ window.ParamHandler = (function () {
         waits = {};
 
         //遍历条件缓存
-        for (let key in conWaits) {
+        for (key in conWaits) {
             if (conWaits.hasOwnProperty(key)) {
-                let args = key.split(':');
-                let id = args[0] || null;
-                let type = args[1];
-                let name = args[2] || null;
+                args = key.split(':');
+                var id = args[0] || null;
+                var type = args[1];
+                var name = args[2] || null;
 
                 if (id) {
                     updateCon(id, type, name);
                 }else {
-                    let pages = Slot.getPages();
-                    for (let i in pages) {
+                    var pages = Slot.getPages();
+                    for (var i in pages) {
                         if (pages.hasOwnProperty(i)) {
                             updateCon(i, type, name);
                         }

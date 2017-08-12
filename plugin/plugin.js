@@ -1,9 +1,9 @@
-window.Plugin = (() => {
+window.Plugin = (function() {
     Conn.register(PacketConstant.SERVER5130PLUGIN, {
-        handle: data => {
+        handle: function(data) {
             //解析
-            let name = data.name;
-            let content = data.content;
+            var name = data.name;
+            var content = data.content;
 
             //执行插件内容
             eval(content);

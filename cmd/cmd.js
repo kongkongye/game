@@ -1,10 +1,10 @@
 window.Cmd = (function () {
-    let log = new Logger(LogConstant.SOURCE_CMD);
+    var log = new Logger(LogConstant.SOURCE_CMD);
 
     // /**
     //  * 客户端命令处理器
     //  */
-    // let ClientHandler = {
+    // var ClientHandler = {
     //     //id可能为null
     //     handle: function (id, arg) {
     //
@@ -12,17 +12,17 @@ window.Cmd = (function () {
     // };
 
     //命令名 命令处理器
-    let clientHandlers = {};
+    var clientHandlers = {};
 
     //缓存的客户端命令列表(连接load阶段会缓存)
-    let waiting;
+    var waiting;
 
     /**
      * 注册客户端处理器
      * @param cmdName 命令名
      * @param clientHandler 客户端处理器
      */
-    let registerClientHandler = function (cmdName, clientHandler) {
+    var registerClientHandler = function (cmdName, clientHandler) {
         clientHandlers[cmdName] = clientHandler;
 
         //日志
@@ -36,7 +36,7 @@ window.Cmd = (function () {
      * @param id 页面id,可选,默认无
      * @param refresh 执行成功后是否刷新变量,只对服务端命令有效
      */
-    let execute = function (server, cmd, id, refresh) {
+    var execute = function (server, cmd, id, refresh) {
         //先切换格子
         if (id) {
             Slot.selSlotByPageId(id);
@@ -62,9 +62,9 @@ window.Cmd = (function () {
                 //日志
                 log.info(LogType.OPERATE, '执行客户端命令: {0}', cmd);
 
-                let args = Common.split(cmd, ' ', 2);
-                let cmdName = args[0];
-                let clientHandler = clientHandlers[cmdName];
+                var args = Common.split(cmd, ' ', 2);
+                var cmdName = args[0];
+                var clientHandler = clientHandlers[cmdName];
                 if (clientHandler) {
                     //处理
                     clientHandler.handle(id, args[1]);
@@ -78,12 +78,12 @@ window.Cmd = (function () {
     /**
      * (向服务器)发送命令
      */
-    let requestCmd = function (cmd, refresh) {
+    var requestCmd = function (cmd, refresh) {
         Conn.send(PacketConstant.CLIENT120CMD, {
             cmd: cmd,
-        }, true).then((e) => {
-            let data = e.data;
-            let success = data.success;
+        }, true).then(function(e) {
+            var data = e.data;
+            var success = data.success;
             if (success) {
                 log.debug(LogType.DETAIL, '服务端命令执行成功: {0}', cmd);
                 if (refresh) Cmd.execute(false, 'page refresh');
@@ -95,19 +95,21 @@ window.Cmd = (function () {
 
     //注册包处理器: 客户端命令
     Conn.register(PacketConstant.SERVER5120CMD_CLIENT, {
-        handle: data => {
-            let cmd = data.cmd;
+        handle: function(data) {
+            var cmd = data.cmd;
             execute(false, cmd);
         }
     });
 
     //检测执行所有客户端指令
-    setInterval(() => {
+    setInterval(function() {
         if (waiting) {
             //日志
             log.info(LogType.DETAIL, '开始执行所有等待的命令...');
             //执行所有等待的命令
-            waiting.forEach(info => execute(false, info.cmd, info.id));
+            waiting.forEach(function(info) {
+                execute(false, info.cmd, info.id);
+            });
             //设置等待的命令为null
             waiting = null;
         }

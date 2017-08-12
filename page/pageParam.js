@@ -4,28 +4,30 @@ window.PageParam = (function () {
      * @param path 页面路径
      * @return {Array} 全部变量(无重复)
      */
-    let getParams = function (path) {
+    var getParams = function (path) {
         //获取
-        let result = getPage(path);
+        var result = getPage(path);
         //去重
         result = reduce(result);
         //返回
         return result;
     };
 
-    let getPage = function (path) {
-        let page = PageConfig.getPage(path).page;
-        let result = [];
+    var getPage = function (path) {
+        var page = PageConfig.getPage(path).page;
+        var result = [];
         //标题
         result = result.concat(get(page['_title']));
         //行列表
-        page['lines'].forEach(e => result = result.concat(getVirtualLine(e)));
+        page['lines'].forEach(function(e) {
+            result = result.concat(getVirtualLine(e))
+        });
         //返回
         return result;
     };
 
-    let getVirtualLine = function (virtualLine) {
-        let type = virtualLine['type'];
+    var getVirtualLine = function (virtualLine) {
+        var type = virtualLine['type'];
         if (type === 'line') {
             return getLine(virtualLine);
         }else if (type === 'list') {
@@ -37,44 +39,48 @@ window.PageParam = (function () {
         }else throw '虚拟行类型'+type+'未识别!';
     };
 
-    let getLine = function (virtualLine) {
-        let result = [];
+    var getLine = function (virtualLine) {
+        var result = [];
         //条件
         result = result.concat(get(virtualLine['_con']));
         //组件
-        virtualLine['components'].forEach(e => result = result.concat(getComponent(e)));
+        virtualLine['components'].forEach(function(e) {
+            result = result.concat(getComponent(e))
+        });
         //返回
         return result;
     };
 
-    let getList = function (virtualLine) {
-        let result = [];
+    var getList = function (virtualLine) {
+        var result = [];
         //条件
         result = result.concat(get(virtualLine['_con']));
         //行列表
-        virtualLine['lines'].forEach(e => result = result.concat(getVirtualLine(e)));
+        virtualLine['lines'].forEach(function(e) {
+            result = result.concat(getVirtualLine(e))
+        });
         //返回
         return result;
     };
 
-    let getBr = function (virtualLine) {
-        let result = [];
+    var getBr = function (virtualLine) {
+        var result = [];
         //条件
         result = result.concat(get(virtualLine['_con']));
         //返回
         return result;
     };
 
-    let getImport = function (virtualLine) {
-        let result = [];
+    var getImport = function (virtualLine) {
+        var result = [];
         //导入
         result = result.concat(getPage(virtualLine['_path']));
         //返回
         return result;
     };
 
-    let getComponent = function (component) {
-        let type = component['type'];
+    var getComponent = function (component) {
+        var type = component['type'];
         if (type === 'text') {
             return getText(component);
         }else if (type === 'button') {
@@ -86,8 +92,8 @@ window.PageParam = (function () {
         }else throw '组件类型'+type+'未识别!';
     };
 
-    let getText = function (component) {
-        let result = [];
+    var getText = function (component) {
+        var result = [];
 
         //条件
         result = result.concat(get(component['_con']));
@@ -99,8 +105,8 @@ window.PageParam = (function () {
         return result;
     };
 
-    let getButton = function (component) {
-        let result = [];
+    var getButton = function (component) {
+        var result = [];
 
         //条件
         result = result.concat(get(component['_con']));
@@ -115,8 +121,8 @@ window.PageParam = (function () {
         return result;
     };
 
-    let getInput = function (component) {
-        let result = [];
+    var getInput = function (component) {
+        var result = [];
 
         //条件
         result = result.concat(get(component['_con']));
@@ -131,14 +137,16 @@ window.PageParam = (function () {
         return result;
     };
 
-    let getContainer = function (component) {
-        let result = [];
+    var getContainer = function (component) {
+        var result = [];
 
         //条件
         result = result.concat(get(component['_con']));
 
         //组件
-        component['components'].forEach(e => result = result.concat(getComponent(e)));
+        component['components'].forEach(function(e) {
+            result = result.concat(getComponent(e))
+        });
 
         //返回
         return result;
@@ -149,7 +157,7 @@ window.PageParam = (function () {
      * @param {string|null} str 字符串
      * @return {Array} 变量列表,可为空数组不为null
      */
-    let get = function (str) {
+    var get = function (str) {
         if (!str) return [];
 
         return Param.getParams(str);
@@ -160,19 +168,19 @@ window.PageParam = (function () {
      * @param array 数组
      * @return {Array} 去重后的新数组,不为null可为空数组
      */
-    let reduce = function (array) {
+    var reduce = function (array) {
         if (!array || array.length === 0) return [];
 
         //去重
-        let set = {};
-        array.forEach(e => {
-            let key = e['type']+":"+e['name'];
+        var set = {};
+        array.forEach(function(e) {
+            var key = e['type']+":"+e['name'];
             set[key] = e;
         });
 
         //构造结果
-        let result = [];
-        for (let key in set) {
+        var result = [];
+        for (var key in set) {
             if (set.hasOwnProperty(key)) {
                 result.push(set[key]);
             }
