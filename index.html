@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>game</title>
+
+    <link type="text/css" rel="stylesheet" href="normalize.css">
+    <link type="text/css" rel="stylesheet" href="theme.css">
+
+    <script src="lib/jquery.js"></script>
+
+    <script src="constant.js"></script>
+    <script src="common.js"></script>
+    <script src="conn/ConnConstant.js"></script>
+    <script src="conn/PacketConstant.js"></script>
+    <script src="param/paramConstant.js"></script>
+    <script src="cmd/cmdConstant.js"></script>
+    <script src="color/ColorConstant.js"></script>
+    <script src="con/conConstant.js"></script>
+    <script src="log/logConstant.js"></script>
+
+    <script src="store/store.js"></script>
+    <script src="color/Splitor.js"></script>
+    <script src="color/color.js"></script>
+    <script src="log/log.js"></script>
+    <script src="con/con.js"></script>
+    <script src="con/conHandlerJs.js"></script>
+    <script src="conn/ws.js"></script>
+    <script src="conn/conn.js"></script>
+    <script src="req/req.js"></script>
+    <script src="param/param.js"></script>
+    <script src="page/panel.js"></script>
+    <script src="page/slot.js"></script>
+    <script src="page/history.js"></script>
+    <script src="page/pageConfig.js"></script>
+    <script src="page/pageParam.js"></script>
+    <script src="page/paramHandler.js"></script>
+    <script src="page/pageShow.js"></script>
+    <script src="page/tabConfig.js"></script>
+    <script src="cmd/cmd.js"></script>
+    <script src="page/slotCmd.js"></script>
+    <script src="cmd/evalCmd.js"></script>
+    <script src="page/pageCmd.js"></script>
+    <script src="show/show.js"></script>
+    <script src="show/defaultShow.js"></script>
+    <script src="login/login.js"></script>
+    <script src="list/list.js"></script>
+    <script src="top/top.js"></script>
+    <script src="plugin/plugin.js"></script>
+    <script src="main.js"></script>
+</head>
+<body>
+    <div id="main-top" class="btn-group">
+        <input id="top-back" class="btn btn-circle" type="button" value="⇐返回" onclick="Top.back();"/>
+        <input id="top-main" class="btn btn-circle" type="button" value="主页" onclick="Top.main();"/>
+        <input id="top-refresh" class="btn btn-circle" type="button" value="刷新" onclick="Top.refresh();"/>
+        <input class="btn btn-circle" type="button" value="设置"/>
+        <input id="top-close" class="btn btn-circle" type="button" value="关闭" onclick="Top.close();"/>
+    </div>
+
+    <div id="main-middle">
+        <div id="slots-div">
+            <!--格子插入位置-->
+        </div>
+    </div>
+
+    <div id="main-bottom-space"></div>
+
+    <div id="main-bottom" class="panel"></div>
+</body>
+</html>
